@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+
+<head>
+    <link href="css/appStyle.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body ng-controller="pictureCtrl">
+    <div id="wrapperImg">
+        <div id="scrollerImg">
+            <ul>
+                <li ng-repeat="i in slides track by $index ">
+                    <img src="img/1.jpg" itemprop="thumbnail" ng-click='savePositionStorage()'>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/angular.js"></script>
+    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="js/iscroll.js"></script>
+    <script type="text/javascript">
+    var myApp = angular.module('myApp', [])　
+    function pictureCtrl($scope, $http) {
+        ///使用iscroll5.js拖动页面
+        var myScroll;
+
+        setTimeout(function() {
+            trigger_myScroll();
+        }, 2000);
+        $scope.slides = new Array(30);
+
+        function trigger_myScroll() {
+            //  是否滚动到缓存位置继续浏览   
+            myScroll = new iScroll('wrapperImg', {
+                onBeforeScrollStart: function(e) {
+                    e.preventDefault();
+                },
+                onScrollEnd: function() {
+                        console.log("-----++++--yyyyyy-++++ " + this.y);
+                        console.log("-----+--absStartY-++++ " + this.absStartY);
+                        console.log("----maxScrollY-++++ " + this.maxScrollY);
+                    }
+                    /* onScrollEnd: function() {
+                 if (!JSON.parse(window.localStorage.getItem("pagePositionTop")) == 0) {
+                 // this.y为非法数字时，利用缓存对y值重新赋值
+                   myScroll.y = parseInt(window.localStorage.getItem("pagePositionTop"));
+                     console.log("-----++++--yyyyyy-++++ " + myScroll.y); 
+                     window.localStorage.setItem("pagePositionTop", 0);
+                 } else {
+                     console.log("-----+--absStartY-++++ " + myScroll.absStartY); 
+                 }
+             }*/
+            });
+            if (window.localStorage.getItem("pagePositionTop")) {
+                var getPositionStorage = window.localStorage.getItem("pagePositionTop");
+                myScroll.scrollTo(0, getPositionStorage, 1000);
+            }
+        }
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, false);
+
+        $scope.savePositionStorage = function() {
+            window.localStorage.setItem("pagePositionTop", myScroll.y);
+        }　
+    }
+    </script>
+
+</html>
